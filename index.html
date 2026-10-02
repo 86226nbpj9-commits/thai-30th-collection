@@ -86,12 +86,28 @@ function stats(){
 }
 function getOfficialImageUrl(c){
   if(c.image_url) return c.image_url;
-  // Official Thai Pokémon card images follow the MA6 detail-image numbering.
-  // The catalog sort order maps to the official detail IDs for the 199 results.
-  const detailId = 14719 + c.sort_order;
-  return `https://asia.pokemon-card.com/th/card-img/th000${detailId}.png`;
-}
 
+  const n = c.sort_order;
+
+  // Main set + AR: official detail IDs follow the card sequence.
+  if(n >= 1 && n <= 156){
+    return `https://asia.pokemon-card.com/th/card-img/th000${14719+n}.png`;
+  }
+
+  // 157/130 and 158/130 are SAR prints. The Thai official database
+  // does not currently expose stable detail-image URLs for these two
+  // entries, so we deliberately do NOT show a wrong image.
+  if(n === 157 || n === 158) return "";
+
+  // 159/130 through 196/130 use the later official detail-ID block.
+  // Example: 159 -> detail 14875 and 180 -> detail 14895.
+  if(n >= 159 && n <= 196){
+    return `https://asia.pokemon-card.com/th/card-img/th000${14715+n}.png`;
+  }
+
+  // RGB cards do not use the numbered detail-ID sequence.
+  return "";
+}
 function render(){
   const q=$("search").value.toLowerCase().trim(), r=$("rarity").value, s=$("status").value;
   const list=catalog.filter(c=>{
@@ -105,7 +121,7 @@ function render(){
     const owned=col.owned&&col.quantity>0;
     const imageUrl=getOfficialImageUrl(c);
     return `<article class="card ${owned?"owned":""}">
-      <div class="visual"><img src="${escapeHtml(imageUrl)}" alt="${escapeHtml(c.name)}" loading="lazy" onerror="this.style.display='none';this.parentElement.textContent='${escapeHtml(c.card_number)}'"></div>
+      <div class="visual">${imageUrl?`<img src="${escapeHtml(imageUrl)}" alt="${escapeHtml(c.name)}" loading="lazy" onerror="this.style.display='none';this.parentElement.textContent='${escapeHtml(c.card_number)}'">`:`${escapeHtml(c.card_number)}`}</div>
       <div class="body"><div class="num">${escapeHtml(c.card_number)}</div><div class="name">${escapeHtml(c.name)}</div>
       <div class="badges"><span class="badge">${escapeHtml(c.rarity)}</span>${owned?'<span class="badge owned">Possédée</span>':''}</div>
       <div class="actions"><button onclick="toggleOwned(${c.id})">${owned?"Retirer":"Posséder"}</button><button class="secondary" onclick="openEdit(${c.id})">Détails</button></div>
