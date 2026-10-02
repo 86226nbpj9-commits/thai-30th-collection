@@ -89,26 +89,39 @@ function getOfficialImageUrl(c){
 
   const n = c.sort_order;
 
-  // Main set + AR + 153/154: official detail IDs follow the card sequence.
+  // 001-154: official Thai detail IDs follow the card sequence.
   if(n >= 1 && n <= 154){
     return `https://asia.pokemon-card.com/th/card-img/th000${14719+n}.png`;
   }
 
-  // 155/130 and 156/130 are a special break in the official
-  // detail-ID sequence: 155 -> 14873 and 156 -> 14874.
+  // 155/130 and 156/130: special ID block.
+  // 155 -> 14873, 156 -> 14874.
   if(n === 155 || n === 156){
     return `https://asia.pokemon-card.com/th/card-img/th000${14718+n}.png`;
   }
 
-  // 157/130 and 158/130 are SAR prints. The Thai official database
-  // does not currently expose stable detail-image URLs for these two
-  // entries, so we deliberately do NOT show a wrong image.
+  // 157/130 and 158/130: SAR cards.
+  // Stable Thai detail-image URLs are not exposed in the indexed database,
+  // so we intentionally leave these blank rather than showing the wrong card.
   if(n === 157 || n === 158) return "";
 
-  // 159/130 through 196/130 use the later official detail-ID block.
-  // Example: 159 -> detail 14875 and 180 -> detail 14895.
-  if(n >= 159 && n <= 196){
+  // 159-181: sequential Thai detail IDs.
+  // 159 -> 14875, 180 -> 14895, 181 -> 14896.
+  if(n >= 159 && n <= 181){
     return `https://asia.pokemon-card.com/th/card-img/th000${14715+n}.png`;
+  }
+
+  // IMPORTANT: 182/130 and 183/130 are the two halves of the same
+  // Darkrai & Cresselia LEGEND card and therefore share ONE official
+  // detail/image ID: 14897.
+  if(n === 182 || n === 183){
+    return `https://asia.pokemon-card.com/th/card-img/th00014897.png`;
+  }
+
+  // 184-196 resume the sequence after the shared LEGEND entry.
+  // 184 -> 14898 (N), ... 196 -> 14910 (Magikarp).
+  if(n >= 184 && n <= 196){
+    return `https://asia.pokemon-card.com/th/card-img/th000${14714+n}.png`;
   }
 
   // RGB cards do not use the numbered detail-ID sequence.
