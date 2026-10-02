@@ -6,49 +6,142 @@
 <title>Thai 30th Collection</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
-*{box-sizing:border-box}body{margin:0;background:#0f1012;color:#f5f5f5;font-family:system-ui,-apple-system,Segoe UI,sans-serif}
-.wrap{max-width:1200px;margin:auto;padding:28px 18px}.card{background:#17191d;border:1px solid #292c32;border-radius:16px;padding:22px}
-h1{margin:0 0 8px}.muted{color:#9da3ad}.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:14px;margin-top:20px}
-.item{background:#17191d;border:1px solid #292c32;border-radius:14px;overflow:hidden}.item img{width:100%;aspect-ratio:2/3;object-fit:contain;background:#111}.item .p{padding:12px}
-input,button{font:inherit;border-radius:10px;padding:11px 13px;border:1px solid #343842;background:#101216;color:#fff}
-button{cursor:pointer;background:#d7a94b;color:#111;border:0;font-weight:700}.row{display:flex;gap:10px;flex-wrap:wrap}.hidden{display:none!important}
-.top{display:flex;justify-content:space-between;gap:15px;align-items:center;margin-bottom:20px}.stats{display:flex;gap:10px;flex-wrap:wrap;margin:18px 0}
-.stat{background:#17191d;border:1px solid #292c32;border-radius:12px;padding:12px 16px}.stat b{display:block;font-size:20px}
-.error{color:#ff8585;margin-top:10px}.ok{color:#7ee2a8;margin-top:10px}
+:root{--bg:#0b0d12;--panel:#121722;--panel2:#171d29;--text:#f5f7fb;--muted:#8e98aa;--line:#273044;--accent:#7c5cff;--good:#36d399;--danger:#ff5d73}
+*{box-sizing:border-box}body{margin:0;background:linear-gradient(180deg,#0b0d12,#0f131b);color:var(--text);font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+.wrap{max-width:1500px;margin:auto;padding:28px 22px 60px}.top{display:flex;justify-content:space-between;gap:20px;align-items:center;margin-bottom:24px}.brand h1{margin:0;font-size:30px}.brand p{margin:5px 0 0;color:var(--muted)}button,input,select,textarea{font:inherit}button{border:0;border-radius:10px;padding:10px 14px;background:var(--accent);color:white;cursor:pointer}button.secondary{background:#202738}button.danger{background:#6f2635}
+.auth{max-width:430px;margin:12vh auto;background:var(--panel);padding:26px;border:1px solid var(--line);border-radius:18px;box-shadow:0 20px 70px #0007}.auth h1{margin-top:0}.field{display:grid;gap:7px;margin:12px 0}.field label{color:var(--muted);font-size:13px}.field input,.field select,.field textarea,.search{width:100%;background:#0d121b;color:var(--text);border:1px solid var(--line);border-radius:10px;padding:11px}.row{display:flex;gap:10px;flex-wrap:wrap}.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-bottom:18px}.stat{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:16px}.stat b{display:block;font-size:25px}.stat span{color:var(--muted);font-size:13px}.toolbar{display:flex;gap:10px;align-items:center;margin:15px 0;flex-wrap:wrap}.search{flex:1;min-width:240px}.filters{display:flex;gap:8px;flex-wrap:wrap}.filters select{background:#121722;color:var(--text);border:1px solid var(--line);border-radius:10px;padding:10px}.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:14px}.card{background:var(--panel);border:1px solid var(--line);border-radius:15px;overflow:hidden;position:relative}.card.owned{border-color:#2c8f6d}.visual{aspect-ratio:2.5/3.5;background:linear-gradient(135deg,#202638,#0d121a);display:grid;place-items:center;color:#657087;font-weight:700}.visual img{width:100%;height:100%;object-fit:cover}.body{padding:12px}.num{color:#9ba7bc;font-size:12px}.name{font-weight:700;margin-top:3px;min-height:38px}.badges{display:flex;gap:6px;flex-wrap:wrap;margin:8px 0}.badge{font-size:11px;padding:4px 7px;border-radius:999px;background:#232b3d;color:#dbe2f0}.badge.owned{background:#123f31;color:#71e6ba}.actions{display:flex;gap:7px}.actions button{flex:1;padding:8px;font-size:12px}.qty{display:flex;align-items:center;justify-content:space-between;margin-top:8px;color:var(--muted);font-size:12px}.hidden{display:none!important}.modal{position:fixed;inset:0;background:#0009;display:grid;place-items:center;padding:20px;z-index:10}.modalbox{width:min(620px,100%);max-height:90vh;overflow:auto;background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:20px}.close{float:right;background:#252d3d}.notice{padding:12px 14px;background:#161d2a;border:1px solid var(--line);border-radius:12px;color:#cbd3e1;margin:10px 0}.small{font-size:12px;color:var(--muted)}@media(max-width:700px){.stats{grid-template-columns:repeat(2,1fr)}.grid{grid-template-columns:repeat(2,minmax(0,1fr))}.wrap{padding:18px 12px}}
 </style>
 </head>
 <body>
-<div class="wrap">
-<section id="auth" class="card">
-<h1>🃏 Thai 30th Collection</h1><p class="muted">Connexion à ta collection personnelle.</p>
-<div class="row"><input id="email" type="email" placeholder="Ton e-mail"><input id="password" type="password" placeholder="Mot de passe">
-<button id="signup">Créer mon compte</button><button id="login">Se connecter</button></div>
-<div id="authMsg"></div>
-</section>
-<section id="app" class="hidden">
-<div class="top"><div><h1>Thai 30th Collection</h1><div class="muted">Collection synchronisée dans le cloud</div></div><button id="logout">Déconnexion</button></div>
-<div class="stats"><div class="stat">Possédées<b id="owned">0</b></div><div class="stat">Total<b id="total">0</b></div><div class="stat">Progression<b id="progress">0%</b></div></div>
-<div class="card"><div class="row"><input id="search" placeholder="Rechercher une carte…"><button id="refresh">Actualiser</button></div></div>
-<div id="cards" class="grid"></div>
-</section>
+<div id="auth" class="auth">
+  <h1>Thai 30th Collection</h1>
+  <p class="small">Ta collection personnelle du 30th CELEBRATION — MA6 T.</p>
+  <div class="field"><label>Email</label><input id="email" type="email" autocomplete="email"></div>
+  <div class="field"><label>Mot de passe</label><input id="password" type="password" autocomplete="current-password"></div>
+  <div class="row"><button id="login">Se connecter</button><button id="signup" class="secondary">Créer le compte</button></div>
+  <div id="authMsg" class="small"></div>
 </div>
+
+<div id="app" class="wrap hidden">
+  <div class="top">
+    <div class="brand"><h1>Thai 30th Collection</h1><p>30th CELEBRATION · MA6 T · master set</p></div>
+    <button id="logout" class="secondary">Déconnexion</button>
+  </div>
+  <div class="stats">
+    <div class="stat"><b id="ownedCount">0</b><span>Cartes possédées</span></div>
+    <div class="stat"><b id="totalCount">199</b><span>Total master set</span></div>
+    <div class="stat"><b id="progress">0%</b><span>Progression</span></div>
+    <div class="stat"><b id="value">0 ฿</b><span>Valeur estimée</span></div>
+  </div>
+  <div class="toolbar">
+    <input id="search" class="search" placeholder="Rechercher numéro ou nom…">
+    <div class="filters">
+      <select id="rarity"><option value="">Toutes raretés</option><option>C</option><option>U</option><option>R</option><option>RR</option><option>AR</option><option>SAR</option><option>FUR</option><option>Classic Collection</option><option>RBG</option></select>
+      <select id="status"><option value="">Toutes</option><option value="owned">Possédées</option><option value="missing">Manquantes</option><option value="wishlist">Wishlist</option></select>
+    </div>
+  </div>
+  <div id="msg" class="notice hidden"></div>
+  <div id="grid" class="grid"></div>
+</div>
+
+<div id="modal" class="modal hidden">
+  <div class="modalbox">
+    <button id="close" class="close">Fermer</button>
+    <h2 id="modalTitle">Carte</h2>
+    <div class="field"><label>Quantité</label><input id="mQty" type="number" min="0" step="1"></div>
+    <div class="field"><label>État</label><select id="mCondition"><option>NM</option><option>EX</option><option>GD</option><option>Played</option><option>Damaged</option></select></div>
+    <div class="field"><label>Prix payé (฿)</label><input id="mPaid" type="number" min="0" step="1"></div>
+    <div class="field"><label>Valeur estimée (฿)</label><input id="mValue" type="number" min="0" step="1"></div>
+    <div class="field"><label>Notes</label><textarea id="mNotes" rows="4"></textarea></div>
+    <div class="row"><button id="save">Enregistrer</button><button id="wishlist" class="secondary">Wishlist</button></div>
+  </div>
+</div>
+
 <script>
 const SUPABASE_URL="https://lsjqkrvgrmladfetjzrg.supabase.co";
 const SUPABASE_PUBLISHABLE_KEY="sb_publishable_UFqLEVRdNFC2XtU37lx2cg_cryN1HfR";
 const client=supabase.createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY);
-let allCards=[];
+let catalog=[], collection=new Map(), currentCard=null;
+
 const $=id=>document.getElementById(id);
-function msg(t,c=""){$("authMsg").className=c;$("authMsg").textContent=t}
-async function loadCards(){const {data,error}=await client.from("cards").select("*").order("id");if(error){console.error(error);return}allCards=data||[];render()}
-function render(){const q=$("search").value.trim().toLowerCase();const cards=allCards.filter(c=>!q||(c.card_number||"").toLowerCase().includes(q)||(c.name||"").toLowerCase().includes(q));
-$("cards").innerHTML=cards.map(c=>`<article class="item">${c.image_url?`<img src="${c.image_url}" alt="${esc(c.name)}">`:`<div style="aspect-ratio:2/3;display:grid;place-items:center;color:#666">Pas d'image</div>`}<div class="p"><b>${esc(c.card_number)}</b><div class="muted">${esc(c.name)}</div><div style="margin-top:8px">${c.owned?"✅ Possédée":"⬜ Manquante"} · x${c.quantity}</div></div></article>`).join("");
-const o=allCards.filter(c=>c.owned).length;$("owned").textContent=o;$("total").textContent=allCards.length;$("progress").textContent=allCards.length?Math.round(o/allCards.length*100)+"%":"0%"}
-function esc(s){return String(s??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]))}
-$("signup").onclick=async()=>{const email=$("email").value.trim(),password=$("password").value;if(!email||password.length<6){msg("E-mail + mot de passe de 6 caractères minimum.","error");return}const {error}=await client.auth.signUp({email,password});msg(error?error.message:"Compte créé. Vérifie ton e-mail si nécessaire.",error?"error":"ok")};
-$("login").onclick=async()=>{const email=$("email").value.trim(),password=$("password").value;const {error}=await client.auth.signInWithPassword({email,password});msg(error?error.message:"Connexion réussie.",error?"error":"ok")};
-$("logout").onclick=()=>client.auth.signOut();$("refresh").onclick=loadCards;$("search").oninput=render;
-client.auth.onAuthStateChange((_e,s)=>{const logged=!!s;$("auth").classList.toggle("hidden",logged);$("app").classList.toggle("hidden",!logged);if(logged)loadCards()});
-(async()=>{const {data:{session}}=await client.auth.getSession();if(session){$("auth").classList.add("hidden");$("app").classList.remove("hidden");loadCards()}})();
+function msg(t){$("msg").textContent=t;$("msg").classList.remove("hidden");setTimeout(()=>$("msg").classList.add("hidden"),3500)}
+function escapeHtml(s){return String(s??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]))}
+
+async function load(){
+  const {data:c,error:ce}=await client.from("card_catalog").select("*").order("sort_order");
+  if(ce){msg(ce.message);return}
+  const {data:me}=await client.auth.getUser();
+  if(!me.user)return;
+  const {data:col,error:co}=await client.from("collection").select("*").eq("user_id",me.user.id);
+  if(co){msg(co.message);return}
+  catalog=c||[]; collection=new Map((col||[]).map(x=>[x.card_id,x]));
+  render(); stats();
+}
+function stats(){
+  const owned=[...collection.values()].filter(x=>x.owned&&x.quantity>0).length;
+  const value=[...collection.values()].reduce((s,x)=>s+(Number(x.estimated_value)||0)*(Number(x.quantity)||0),0);
+  $("ownedCount").textContent=owned;$("totalCount").textContent=catalog.length;
+  $("progress").textContent=(catalog.length?Math.round(owned/catalog.length*100):0)+"%";
+  $("value").textContent=value.toLocaleString("fr-FR")+" ฿";
+}
+function render(){
+  const q=$("search").value.toLowerCase().trim(), r=$("rarity").value, s=$("status").value;
+  const list=catalog.filter(c=>{
+    const col=collection.get(c.id)||{owned:false,quantity:0,wishlist:false};
+    return (!q||c.card_number.toLowerCase().includes(q)||c.name.toLowerCase().includes(q))
+      &&(!r||c.rarity===r)
+      &&(!s||(s==="owned"&&col.owned)||(s==="missing"&&(!col.owned||!col.quantity))||(s==="wishlist"&&col.wishlist));
+  });
+  $("grid").innerHTML=list.map(c=>{
+    const col=collection.get(c.id)||{owned:false,quantity:0,wishlist:false};
+    const owned=col.owned&&col.quantity>0;
+    return `<article class="card ${owned?"owned":""}">
+      <div class="visual">${c.image_url?`<img src="${escapeHtml(c.image_url)}" alt="">`:`${escapeHtml(c.card_number)}`}</div>
+      <div class="body"><div class="num">${escapeHtml(c.card_number)}</div><div class="name">${escapeHtml(c.name)}</div>
+      <div class="badges"><span class="badge">${escapeHtml(c.rarity)}</span>${owned?'<span class="badge owned">Possédée</span>':''}</div>
+      <div class="actions"><button onclick="toggleOwned(${c.id})">${owned?"Retirer":"Posséder"}</button><button class="secondary" onclick="openEdit(${c.id})">Détails</button></div>
+      <div class="qty">${owned?`Qté : ${col.quantity}`:"Manquante"}${col.wishlist?" · ⭐":""}</div></div>
+    </article>`;
+  }).join("");
+}
+async function toggleOwned(id){
+  const {data:u}=await client.auth.getUser(); if(!u.user)return;
+  const old=collection.get(id)||{quantity:0,condition:"NM",price_paid:0,estimated_value:0,wishlist:false,notes:null};
+  const owned=!old.owned;
+  const payload={user_id:u.user.id,card_id:id,owned,quantity:owned?Math.max(1,old.quantity||1):0,condition:old.condition||"NM",price_paid:old.price_paid||0,estimated_value:old.estimated_value||0,wishlist:old.wishlist||false,notes:old.notes||null,updated_at:new Date().toISOString()};
+  const {data,error}=await client.from("collection").upsert(payload,{onConflict:"user_id,card_id"}).select().single();
+  if(error){msg(error.message);return} collection.set(id,data);render();stats();
+}
+function openEdit(id){
+  currentCard=catalog.find(x=>x.id===id); if(!currentCard)return;
+  const c=collection.get(id)||{};
+  $("modalTitle").textContent=`${currentCard.card_number} · ${currentCard.name}`;
+  $("mQty").value=c.quantity||0;$("mCondition").value=c.condition||"NM";$("mPaid").value=c.price_paid||0;$("mValue").value=c.estimated_value||0;$("mNotes").value=c.notes||"";
+  $("wishlist").textContent=c.wishlist?"Retirer de la wishlist":"Ajouter à la wishlist";
+  $("modal").classList.remove("hidden");
+}
+$("close").onclick=()=>$("modal").classList.add("hidden");
+$("modal").onclick=e=>{if(e.target===$("modal"))$("modal").classList.add("hidden")};
+$("save").onclick=async()=>{
+  const {data:u}=await client.auth.getUser(); if(!u.user||!currentCard)return;
+  const c=collection.get(currentCard.id)||{};
+  const payload={user_id:u.user.id,card_id:currentCard.id,owned:Number($("mQty").value)>0,quantity:Number($("mQty").value)||0,condition:$("mCondition").value,price_paid:Number($("mPaid").value)||0,estimated_value:Number($("mValue").value)||0,wishlist:!!c.wishlist,notes:$("mNotes").value||null,updated_at:new Date().toISOString()};
+  const {data,error}=await client.from("collection").upsert(payload,{onConflict:"user_id,card_id"}).select().single();
+  if(error){msg(error.message);return}collection.set(currentCard.id,data);$("modal").classList.add("hidden");render();stats();
+};
+$("wishlist").onclick=async()=>{
+  const {data:u}=await client.auth.getUser();if(!u.user||!currentCard)return;
+  const c=collection.get(currentCard.id)||{};
+  const payload={user_id:u.user.id,card_id:currentCard.id,owned:!!c.owned,quantity:c.quantity||0,condition:c.condition||"NM",price_paid:c.price_paid||0,estimated_value:c.estimated_value||0,wishlist:!c.wishlist,notes:c.notes||null,updated_at:new Date().toISOString()};
+  const {data,error}=await client.from("collection").upsert(payload,{onConflict:"user_id,card_id"}).select().single();
+  if(error){msg(error.message);return}collection.set(currentCard.id,data);$("wishlist").textContent=data.wishlist?"Retirer de la wishlist":"Ajouter à la wishlist";render();stats();
+};
+$("search").oninput=render;$("rarity").onchange=render;$("status").onchange=render;
+$("login").onclick=async()=>{const {error}=await client.auth.signInWithPassword({email:$("email").value,password:$("password").value});$("authMsg").textContent=error?error.message:"Connexion…"};
+$("signup").onclick=async()=>{const {error}=await client.auth.signUp({email:$("email").value,password:$("password").value});$("authMsg").textContent=error?error.message:"Compte créé. Vérifie ton email si Supabase le demande."};
+$("logout").onclick=()=>client.auth.signOut();
+client.auth.onAuthStateChange((_event,session)=>{if(session){$("auth").classList.add("hidden");$("app").classList.remove("hidden");load()}else{$("auth").classList.remove("hidden");$("app").classList.add("hidden")}});
+(async()=>{const {data}=await client.auth.getSession();if(data.session){$("auth").classList.add("hidden");$("app").classList.remove("hidden");await load()}})();
 </script>
 </body>
 </html>
