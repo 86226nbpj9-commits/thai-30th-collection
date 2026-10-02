@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Thai 30th Collection</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#0f1012;color:#f5f5f5;font-family:system-ui,-apple-system,Segoe UI,sans-serif}
+.wrap{max-width:1200px;margin:auto;padding:28px 18px}.card{background:#17191d;border:1px solid #292c32;border-radius:16px;padding:22px}
+h1{margin:0 0 8px}.muted{color:#9da3ad}.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:14px;margin-top:20px}
+.item{background:#17191d;border:1px solid #292c32;border-radius:14px;overflow:hidden}.item img{width:100%;aspect-ratio:2/3;object-fit:contain;background:#111}.item .p{padding:12px}
+input,button{font:inherit;border-radius:10px;padding:11px 13px;border:1px solid #343842;background:#101216;color:#fff}
+button{cursor:pointer;background:#d7a94b;color:#111;border:0;font-weight:700}.row{display:flex;gap:10px;flex-wrap:wrap}.hidden{display:none!important}
+.top{display:flex;justify-content:space-between;gap:15px;align-items:center;margin-bottom:20px}.stats{display:flex;gap:10px;flex-wrap:wrap;margin:18px 0}
+.stat{background:#17191d;border:1px solid #292c32;border-radius:12px;padding:12px 16px}.stat b{display:block;font-size:20px}
+.error{color:#ff8585;margin-top:10px}.ok{color:#7ee2a8;margin-top:10px}
+</style>
+</head>
+<body>
+<div class="wrap">
+<section id="auth" class="card">
+<h1>🃏 Thai 30th Collection</h1><p class="muted">Connexion à ta collection personnelle.</p>
+<div class="row"><input id="email" type="email" placeholder="Ton e-mail"><input id="password" type="password" placeholder="Mot de passe">
+<button id="signup">Créer mon compte</button><button id="login">Se connecter</button></div>
+<div id="authMsg"></div>
+</section>
+<section id="app" class="hidden">
+<div class="top"><div><h1>Thai 30th Collection</h1><div class="muted">Collection synchronisée dans le cloud</div></div><button id="logout">Déconnexion</button></div>
+<div class="stats"><div class="stat">Possédées<b id="owned">0</b></div><div class="stat">Total<b id="total">0</b></div><div class="stat">Progression<b id="progress">0%</b></div></div>
+<div class="card"><div class="row"><input id="search" placeholder="Rechercher une carte…"><button id="refresh">Actualiser</button></div></div>
+<div id="cards" class="grid"></div>
+</section>
+</div>
+<script>
+const SUPABASE_URL="YOUR_SUPABASE_URL";
+const SUPABASE_PUBLISHABLE_KEY="YOUR_SUPABASE_PUBLISHABLE_KEY";
+const client=supabase.createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY);
+let allCards=[];
+const $=id=>document.getElementById(id);
+function msg(t,c=""){$("authMsg").className=c;$("authMsg").textContent=t}
+async function loadCards(){const {data,error}=await client.from("cards").select("*").order("id");if(error){console.error(error);return}allCards=data||[];render()}
+function render(){const q=$("search").value.trim().toLowerCase();const cards=allCards.filter(c=>!q||(c.card_number||"").toLowerCase().includes(q)||(c.name||"").toLowerCase().includes(q));
+$("cards").innerHTML=cards.map(c=>`<article class="item">${c.image_url?`<img src="${c.image_url}" alt="${esc(c.name)}">`:`<div style="aspect-ratio:2/3;display:grid;place-items:center;color:#666">Pas d'image</div>`}<div class="p"><b>${esc(c.card_number)}</b><div class="muted">${esc(c.name)}</div><div style="margin-top:8px">${c.owned?"✅ Possédée":"⬜ Manquante"} · x${c.quantity}</div></div></article>`).join("");
+const o=allCards.filter(c=>c.owned).length;$("owned").textContent=o;$("total").textContent=allCards.length;$("progress").textContent=allCards.length?Math.round(o/allCards.length*100)+"%":"0%"}
+function esc(s){return String(s??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]))}
+$("signup").onclick=async()=>{const email=$("email").value.trim(),password=$("password").value;if(!email||password.length<6){msg("E-mail + mot de passe de 6 caractères minimum.","error");return}const {error}=await client.auth.signUp({email,password});msg(error?error.message:"Compte créé. Vérifie ton e-mail si nécessaire.",error?"error":"ok")};
+$("login").onclick=async()=>{const email=$("email").value.trim(),password=$("password").value;const {error}=await client.auth.signInWithPassword({email,password});msg(error?error.message:"Connexion réussie.",error?"error":"ok")};
+$("logout").onclick=()=>client.auth.signOut();$("refresh").onclick=loadCards;$("search").oninput=render;
+client.auth.onAuthStateChange((_e,s)=>{const logged=!!s;$("auth").classList.toggle("hidden",logged);$("app").classList.toggle("hidden",!logged);if(logged)loadCards()});
+(async()=>{const {data:{session}}=await client.auth.getSession();if(session){$("auth").classList.add("hidden");$("app").classList.remove("hidden");loadCards()}})();
+</script>
+</body>
+</html>
