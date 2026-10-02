@@ -84,6 +84,14 @@ function stats(){
   $("progress").textContent=(catalog.length?Math.round(owned/catalog.length*100):0)+"%";
   $("value").textContent=value.toLocaleString("fr-FR")+" ฿";
 }
+function getOfficialImageUrl(c){
+  if(c.image_url) return c.image_url;
+  // Official Thai Pokémon card images follow the MA6 detail-image numbering.
+  // The catalog sort order maps to the official detail IDs for the 199 results.
+  const detailId = 14719 + c.sort_order;
+  return `https://asia.pokemon-card.com/th/card-img/th000${detailId}.png`;
+}
+
 function render(){
   const q=$("search").value.toLowerCase().trim(), r=$("rarity").value, s=$("status").value;
   const list=catalog.filter(c=>{
@@ -95,8 +103,9 @@ function render(){
   $("grid").innerHTML=list.map(c=>{
     const col=collection.get(c.id)||{owned:false,quantity:0,wishlist:false};
     const owned=col.owned&&col.quantity>0;
+    const imageUrl=getOfficialImageUrl(c);
     return `<article class="card ${owned?"owned":""}">
-      <div class="visual">${c.image_url?`<img src="${escapeHtml(c.image_url)}" alt="">`:`${escapeHtml(c.card_number)}`}</div>
+      <div class="visual"><img src="${escapeHtml(imageUrl)}" alt="${escapeHtml(c.name)}" loading="lazy" onerror="this.style.display='none';this.parentElement.textContent='${escapeHtml(c.card_number)}'"></div>
       <div class="body"><div class="num">${escapeHtml(c.card_number)}</div><div class="name">${escapeHtml(c.name)}</div>
       <div class="badges"><span class="badge">${escapeHtml(c.rarity)}</span>${owned?'<span class="badge owned">Possédée</span>':''}</div>
       <div class="actions"><button onclick="toggleOwned(${c.id})">${owned?"Retirer":"Posséder"}</button><button class="secondary" onclick="openEdit(${c.id})">Détails</button></div>
