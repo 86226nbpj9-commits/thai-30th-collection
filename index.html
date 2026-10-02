@@ -89,9 +89,15 @@ function getOfficialImageUrl(c){
 
   const n = c.sort_order;
 
-  // Main set + AR: official detail IDs follow the card sequence.
-  if(n >= 1 && n <= 156){
+  // Main set + AR + 153/154: official detail IDs follow the card sequence.
+  if(n >= 1 && n <= 154){
     return `https://asia.pokemon-card.com/th/card-img/th000${14719+n}.png`;
+  }
+
+  // 155/130 and 156/130 are a special break in the official
+  // detail-ID sequence: 155 -> 14873 and 156 -> 14874.
+  if(n === 155 || n === 156){
+    return `https://asia.pokemon-card.com/th/card-img/th000${14718+n}.png`;
   }
 
   // 157/130 and 158/130 are SAR prints. The Thai official database
